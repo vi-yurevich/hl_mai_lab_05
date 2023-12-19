@@ -8,6 +8,7 @@ export DB_DATABASE=archdb
 export CACHE=127.0.0.1:6379
 export QUEUE_HOST=127.0.0.1:9092
 export QUEUE_TOPIC=event_server
+export IS_PRELOAD_USER_DATA=False
 export QUEUE_GROUP_ID=0
 
 if [[ "$1" == "-d" ]]; then

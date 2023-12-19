@@ -23,11 +23,6 @@ using namespace Poco::Data::Keywords;
 using Poco::Data::Session;
 using Poco::Data::Statement;
 
-// #include <chrono>
-// #include <iostream>
-// #include <thread>
-// using namespace std::chrono_literals;
-
 namespace database
 {
     bool User::operator< (const User &other) const {
@@ -36,12 +31,6 @@ namespace database
     
     void User::preload(const std::string &file)
     {
-        std::string is_preload_user_data = std::getenv("IS_PRELOAD_USER_DATA");
-
-        if (is_preload_user_data == "True") {
-            return;
-        }
-
         try
         {
 
@@ -76,20 +65,18 @@ namespace database
 
                 Poco::Data::Statement insert(session);
                 insert << select_str,
-                use(_id),
-                use(_first_name),
-                use(_last_name),
-                use(_email),
-                use(_phone_number),
-                use(_login),
-                use(_password);
+                use(id),
+                use(first_name),
+                use(last_name),
+                use(email),
+                use(phone_number),
+                use(login),
+                use(password);
 
                 insert.execute();
             }
 
             std::cout << "Inserted " << i << " records" << std::endl;
-
-            setenv("IS_PRELOAD_USER_DATA", "True", 1);
         }
 
         catch (Poco::Data::MySQL::ConnectionException &e)
@@ -659,7 +646,7 @@ namespace database
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement insert(session);
             
-            _id = database::User::get_id_for_insert_user();
+            // _id = database::User::get_id_for_insert_user();
             std::string sharding_hint = database::Database::sharding_hint_for_user(_id);
             
 
@@ -738,7 +725,7 @@ namespace database
         cppkafka::MessageBuilder builder(Config::get().get_queue_topic());
         std::string mk = std::to_string(++message_key);
         builder.key(mk);                                       // set some key
-        builder.header(Hdr{"producer_type", "user writer"}); // set some custom header
+        builder.header(Hdr{"producer_type", "user writer"});   // set some custom header
         builder.payload(message);                              // set message
 
         while (not_sent)
@@ -747,6 +734,8 @@ namespace database
             {
                 producer.produce(builder);
                 not_sent = false;
+
+                std::cout << mk << "->" << message << std::endl; 
             }
             catch (...)
             {

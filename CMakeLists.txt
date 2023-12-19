@@ -106,31 +106,7 @@ target_link_libraries(${LECTURE_SERVICE} PRIVATE
                          "mysqlclient"
                          "rdkafka++"
                          CppKafka::cppkafka  
-                         ZLIB::ZLIB)
-
-
-
-
-add_executable(${LOAD_INIT_DATA} load_data/load_data.cpp
-                         config/config.cpp
-                         database/cache.cpp 
-                         database/database.cpp
-                         database/user.cpp)
-
-target_include_directories(${LOAD_INIT_DATA} PRIVATE "${CMAKE_BINARY_DIR}")
-target_compile_options(${LOAD_INIT_DATA} PRIVATE -Wall -Wextra -pedantic -Werror )
-set_target_properties(${LOAD_INIT_DATA} PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(${LOAD_INIT_DATA} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
-
-target_link_libraries(${LOAD_INIT_DATA} PRIVATE 
-                     ${CMAKE_THREAD_LIBS_INIT} 
-                     ${Poco_LIBRARIES}
-                     "PocoData"
-                     "PocoDataMySQL"
-                     "mysqlclient"
-                     "rdkafka++"
-                     CppKafka::cppkafka
-                     ZLIB::ZLIB)                        
+                         ZLIB::ZLIB)             
 
 
 

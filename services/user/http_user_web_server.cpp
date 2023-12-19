@@ -44,6 +44,9 @@ class HTTPUserWebServer : public Poco::Util::ServerApplication
 public:
     int main([[maybe_unused]] const std::vector<std::string> &args)
     {
+            std::string file_name = "test_data_for_user_table.json";
+            database::User::preload(file_name);
+
             ServerSocket svs(Poco::Net::SocketAddress("0.0.0.0", 8080));
             HTTPServer srv(new HTTPUserRequestFactory(DateTimeFormat::SORTABLE_FORMAT), svs, new HTTPServerParams);
             srv.start();

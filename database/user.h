@@ -18,14 +18,10 @@ namespace database
             std::string _login;
             std::string _password;
 
-            static long get_id_for_insert_user();
-            // static void update_last_inserted_user_id(long new_id);
-            // static long get_last_inserted_user_id();
-
         public:
             bool operator< (const User &other) const;
 
-            void preload(const std::string &file_name);
+            static void preload(const std::string &file_name);
 
             static User fromJSON(const std::string & str);
             static std::vector<User> fromJSON_Array(const std::string &json_array_str);
@@ -46,6 +42,7 @@ namespace database
             std::string &login();
             std::string &password();
 
+            static long get_id_for_insert_user();
 
             static std::optional<User> read_by_id(long id);
             static std::vector<User> read_all();

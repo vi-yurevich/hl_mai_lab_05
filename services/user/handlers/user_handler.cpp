@@ -253,6 +253,7 @@ public:
 
                     if (check_result)
                     {
+                        user.id() = database::User::get_id_for_insert_user();
                         user.send_to_queue();
                         user.save_to_cache();
                         response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
