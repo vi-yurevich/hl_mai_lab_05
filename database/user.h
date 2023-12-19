@@ -21,8 +21,6 @@ namespace database
         public:
             bool operator< (const User &other) const;
 
-            static void preload(const std::string &file_name);
-
             static User fromJSON(const std::string & str);
             static std::vector<User> fromJSON_Array(const std::string &json_array_str);
 

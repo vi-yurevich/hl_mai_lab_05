@@ -29,69 +29,6 @@ namespace database
         return _id < other.get_id();
     }  
     
-    void User::preload(const std::string &file)
-    {
-        try
-        {
-
-            Poco::Data::Session session = database::Database::get().create_session();
-            std::string json;
-            std::ifstream is(file);
-            std::istream_iterator<char> eos;
-            std::istream_iterator<char> iit(is);
-            while (iit != eos)
-                json.push_back(*(iit++));
-            is.close();
-
-            Poco::JSON::Parser parser;
-            Poco::Dynamic::Var result = parser.parse(json);
-            Poco::JSON::Array::Ptr arr = result.extract<Poco::JSON::Array::Ptr>();
-
-            size_t i{0};
-            for (i = 0; i < arr->size(); ++i)
-            {
-                Poco::JSON::Object::Ptr object = arr->getObject(i);
-                long id = database::User::get_id_for_insert_user();
-                std::string first_name = object->getValue<std::string>("first_name");
-                std::string last_name = object->getValue<std::string>("last_name");
-                std::string phone_number = object->getValue<std::string>("phone_number");
-                std::string email = object->getValue<std::string>("email");
-                std::string login = object->getValue<std::string>("login");
-                std::string password = object->getValue<std::string>("password");
-                std::string sharding_hint = database::Database::sharding_hint_for_user(id);
-
-                std::string select_str = "INSERT INTO User (id, first_name,last_name,email,phone_number,login,password) VALUES(?, ?, ?, ?, ?, ?, ?)";
-                select_str += sharding_hint;
-
-                Poco::Data::Statement insert(session);
-                insert << select_str,
-                use(id),
-                use(first_name),
-                use(last_name),
-                use(email),
-                use(phone_number),
-                use(login),
-                use(password);
-
-                insert.execute();
-            }
-
-            std::cout << "Inserted " << i << " records" << std::endl;
-        }
-
-        catch (Poco::Data::MySQL::ConnectionException &e)
-        {
-            std::cout << "connection:" << e.what() << std::endl;
-            throw;
-        }
-        catch (Poco::Data::MySQL::StatementException &e)
-        {
-
-            std::cout << "statement:" << e.what() << std::endl;
-            throw;
-        }
-    }
-    
     Poco::JSON::Object::Ptr User::toJSON() const
     {
         Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
@@ -165,61 +102,7 @@ namespace database
 
         return users;
     }
-/*
-    long User::get_last_inserted_user_id() 
-    {
-        try
-        {
-            Poco::Data::Session session = database::Database::get().create_session();
-            Poco::Data::Statement select(session);
-            long last_inserted_user_id;
-            select << "SELECT `last_id` FROM `Last_inserted_user_id` WHERE `id` = 1;",
-                into(last_inserted_user_id),
-                range(0, 1); //  iterate over result set one row at a time
 
-            select.execute();
-            return last_inserted_user_id;
-        }
-
-        catch (Poco::Data::MySQL::ConnectionException &e)
-        {
-            std::cout << "connection:" << e.what() << std::endl;
-            throw;
-        }
-        catch (Poco::Data::MySQL::StatementException &e)
-        {
-
-            std::cout << "statement:" << e.what() << std::endl;
-            throw;
-        }
-    }
-*/
-/*
-    void User::update_last_inserted_user_id(long new_id)
-    {
-        try
-        {
-            Poco::Data::Session session = database::Database::get().create_session();
-            Poco::Data::Statement update(session);
-            update << "UPDATE `Last_inserted_user_id` SET `last_id` = ? WHERE `id` = 1;",
-                use(new_id);
-
-            update.execute();
-            return;
-        }
-        catch (Poco::Data::MySQL::ConnectionException &e)
-        {
-            std::cout << "connection:" << e.what() << std::endl;
-            throw;
-        }
-        catch (Poco::Data::MySQL::StatementException &e)
-        {
-
-            std::cout << "statement:" << e.what() << std::endl;
-            throw;
-        }
-    }
-*/
     long User::get_id_for_insert_user() {
         try
         {
