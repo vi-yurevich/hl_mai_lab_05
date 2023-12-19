@@ -1,0 +1,8 @@
+CMakeFiles/*
+.vscode/*
+build/*
+tests.cpp
+task.mp
+redis-cpp/*
+redis-cpp
+.DS_Store
